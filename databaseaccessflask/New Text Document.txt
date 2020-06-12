@@ -1,0 +1,109 @@
+from flask import Flask, request, jsonify, redirect, url_for, session
+from pymongo import MongoClient
+from bson import ObjectId
+import datetime
+import bcrypt
+import os
+app = Flask(__name__)
+
+client = MongoClient(
+    mongodb+srvatuldubey08091959@cluster0-isxbl.mongodb.netdbnameretryWrites=true&w=majority)
+db = client.todo
+todoApp = db.todo
+usersList = db.users
+app.config['SECRET_KEY']= os.urandom(12)
+
+@app.route('sessioncreatedstringuserN')
+def index(userN)
+
+    
+     if 'username' in session
+        userN = session['username']
+        return redirect(url_for('getList',userNa = userN))
+        
+        
+
+
+@app.route('loginstringuserID', methods=['POST'])
+def loginuser(userID)
+    request_data = request.get_json()
+    loginuser = usersList.find_one({'username'request_data['username']})
+
+    if loginuser
+        if(bcrypt.hashpw(request_data['password'].encode('utf-8'),loginuser['password'])== loginuser['password'])
+            session['username'] =request_data['username']
+            return redirect(url_for('index',userN = userID))
+        return (jsonify({status NotOk, data {}, error Sorry password does not match}))
+    return  (jsonify({status match, data {}, error Username does not exist - create one}))
+
+
+@app.route('register', methods=['POST', 'GET'])
+def registerUser()
+    if(request.method == POST)
+        request_data = request.get_json()
+        existingUser = usersList.find_one(
+            {'username'request_data['username']})
+
+        if existingUser == None
+            hashpass = bcrypt.hashpw(
+                request_data['password'].encode('utf-8'), bcrypt.gensalt())
+            usersList.insert_one(
+                {'username'request_data['username'], 'password' hashpass})
+            session['username'] =request_data['username']
+            return redirect(url_for('index',userN =request_data['username']))
+        return (jsonify({status NotOk, data {}, error User already exist}))    
+    return(redirect(url_for('loginuser',userID =request_data['username'])))
+
+
+@app.route('stringuserNa', methods=['GET'])
+def getList(userNa)
+
+    reponse = {}
+    if(not todoApp.find({usernameuserNa}))
+        reponse = {username  userNa,status OK, data {}, error Add one item}
+        return jsonify(reponse)
+    todoList = []
+    for item in todoApp.find({username  userNa})
+
+        todoItemtoAppend = {
+            _id item['_id'], title item['title'], comment item[comment]}
+        todoList.append(todoItemtoAppend)
+
+    return jsonify({username userNa,status OK, data todoList, error {}})
+
+
+@app.route('addItemstringuserID', methods=['POST'])
+def addItem(userID)
+    todoList = []
+    request_data = request.get_json()
+    idofItem = request_data['_id']
+    title = request_data['title']
+    comment = request_data['comment']
+    newItem = {
+        'username' userID,
+        '_id' idofItem,
+        'title' title,
+        'comment' comment
+    }
+    todoApp.insert_one(newItem)
+    todoList.append(newItem)
+    return jsonify({usernameuserID,status OK, data todoList, error {}})
+
+
+@ app.route('deleteItemstringuserIDstringiditem', methods=['DELETE'])
+def deleteItem(userID,iditem)
+
+    todoApp.delete_one({'_id' iditem,'username' userID})
+    todoList = []
+    for item in todoApp.find({'username' userID})
+
+        todoItemtoAppend = {
+            _id item['_id'], title item['title'], comment item[comment]}
+        todoList.append(todoItemtoAppend)
+
+    return jsonify({usernameuserID,status OK, data todoList, error {}})
+
+
+if __name__ == '__main__'
+    
+    app.run(host='0.0.0.0', debug=True)
