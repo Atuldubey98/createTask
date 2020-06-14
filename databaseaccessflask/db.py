@@ -67,7 +67,7 @@ def getList(userNa):
             for item in todoApp.find({"username": userNa}):
 
                 todoItemtoAppend = {
-                    "_id": item['_id'], "title": item['title'], "comment": item["comment"]}
+                    "_id": item['_id'], "title": item['title'], "comment": item["comment"],"imageName" : item['imageName']}
                 todoList.append(todoItemtoAppend)
 
             return jsonify({"username": userNa, "status": "OK", "data": todoList, "error": {}})
@@ -81,23 +81,30 @@ def addItem(userID):
     idofItem = request_data['_id']
     title = request_data['title']
     comment = request_data['comment']
-    
+    image = request_data['imageName']
     newItem = {
         'username': userID,
         '_id': idofItem,
         'title': title,
         'comment': comment,
-        
+        'imageName' : image
     }
     todoApp.insert_one(newItem)
     todoList.append(newItem)
     return jsonify({"username": userID, "status": "OK", "data": todoList, "error": {}})
 
 
-@ app.route('/deleteItem/<string:userID>/<string:iditem>', methods=['DELETE'])
-def deleteItem(userID, iditem):
+@ app.route('/deleteItem/<string:userID>/<string:iditem>/<string:filename>', methods=['DELETE'])
+def deleteItem(userID, iditem, filename):
 
+    
+    itemtodelete = todoApp.find_one({'imageName': filename})
+    print(itemtodelete['imageName'])
+    idofitem = images.get_last_version(itemtodelete['imageName'])
+    images.delete(idofitem._id)
+    
     todoApp.delete_one({'_id': iditem, 'username': userID})
+
     todoList = []
     for item in todoApp.find({'username': userID}):
 
@@ -113,7 +120,7 @@ def allItem():
     todoList = []
     for item in todoApp.find():
         todoItemtoAppend = {"_id": item['_id'], "title": item['title'],
-                            "username": item["username"], "comment": item["comment"]}
+                            "username": item["username"], "comment": item["comment"],'imageName' : item['imageName']}
         todoList.append(todoItemtoAppend)
     return jsonify({"data": todoList, "status": "OK", "error": {}})
 
@@ -140,7 +147,17 @@ def download(file_name, itemID, user):
     response.headers["Content-Disposition"] = "attachment; filename={}".format(file_name)
     return response
 
-     
+@app.route('/listusers', methods = ['GET'])
+def listusers():
+    users = []
+    for item in usersList.find():
+        usertoappend = {'username' : item['username']}
+        users.append(usertoappend)
+    if(users == None):
+        return jsonify({'data' : { } , "status" :  "Not Ok", "error" : "No users"})
+    return jsonify({'data' : users , "status" :  "OK", "error" : "Users Found"})
+
+
 
 if __name__ == '__main__':
 

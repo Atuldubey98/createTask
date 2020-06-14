@@ -1,7 +1,9 @@
 import 'package:createTask/provider/taskprovider.dart';
-import 'package:createTask/widget/listitem.dart';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../widget/listallItem.dart';
+import '../screens/homepageScreen.dart';
 
 class AllPost extends StatefulWidget {
   static const routeName = '/allpost';
@@ -36,6 +38,25 @@ class _AllPostState extends State<AllPost> {
     return Scaffold(
       backgroundColor: Color.fromARGB(120, 20, 200, 6),
       appBar: AppBar(
+        actions: <Widget>[
+          MaterialButton(
+            onPressed: () {
+              setState(
+                () {
+                  Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(
+                        builder: (context) => MyHomePage('Your Post'),
+                      ),
+                      (route) => false);
+                },
+              );
+            },
+            child: Text(
+              'Your Post',
+              style: TextStyle(color: Colors.white),
+            ),
+          )
+        ],
         title: Text('All Post'),
         backgroundColor: Color.fromRGBO(20, 20, 2, 0.6),
       ),
@@ -51,12 +72,14 @@ class _AllPostState extends State<AllPost> {
                       ? child
                       : ListView.builder(
                           itemCount: listitem.list.length,
-                          itemBuilder: (context, index) => ListItem(
+                          itemBuilder: (context, index) => ListAllItem(
                               listitem.list[index].id,
                               listitem.list[index].title,
                               listitem.list[index].comments,
                               listitem.list[index].userID,
-                              listitem.list[index].image))),
+                              listitem.list[index].image),
+                        ),
+            ),
     );
   }
 }

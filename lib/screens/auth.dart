@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -16,8 +15,7 @@ class _AuthScreenState extends State<AuthScreen> {
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
   Future<void> register(String username, String password) async {
-    
-    final url = 'http://192.168.0.111:5000/register';
+    final url = 'http://192.168.0.100:5000/register';
     try {
       final response = await http.post(
         url,
@@ -52,7 +50,7 @@ class _AuthScreenState extends State<AuthScreen> {
   }
 
   Future<void> loginUser(String username, String password) async {
-    final url = 'http://192.168.0.111:5000/login/$username';
+    final url = 'http://192.168.0.100:5000/login/$username';
     try {
       final response = await http.post(
         url,
@@ -95,65 +93,92 @@ class _AuthScreenState extends State<AuthScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blueAccent,
       body: _isLoading
-          ? CircularProgressIndicator()
-          : SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Center(
-                  child: Column(
-                    children: <Widget>[
-                      SizedBox(
-                        height: 300,
-                      ),
-                      Container(
-                        color: Colors.grey,
-                        child: TextField(
-                          cursorColor: Colors.white,
-                          controller: usernameController,
-                          decoration: InputDecoration(
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(30),
-                              ),
-                              hintText: "Enter username"),
+          ? Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topRight,
+                  end: Alignment.bottomLeft,
+                  colors: [Colors.yellowAccent, Colors.lightBlueAccent],
+                ),
+              ),
+              child: Center(
+                child: CircularProgressIndicator(
+                  backgroundColor: Colors.green,
+                ),
+              ),
+            )
+          : Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topRight,
+                  end: Alignment.bottomLeft,
+                  colors: [Colors.yellowAccent, Colors.lightBlueAccent],
+                ),
+              ),
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Center(
+                    child: Column(
+                      children: <Widget>[
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.65,
+                          child: Image.network(
+                              'https://logos-download.com/wp-content/uploads/2016/06/Bitcoin_logo_yellow.png'),
                         ),
-                      ),
-                      Container(
-                        color: Colors.grey,
-                        child: TextField(
-                          cursorColor: Colors.white,
-                          controller: passwordController,
-                          decoration: InputDecoration(
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(30),
-                              ),
-                              hintText: "Enter password"),
+                        Container(
+                          child: TextField(
+                            cursorColor: Colors.white,
+                            controller: usernameController,
+                            decoration: InputDecoration(
+                                prefixIcon: Icon(
+                                  Icons.supervised_user_circle,
+                                  color: Colors.blue,
+                                ),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(30),
+                                ),
+                                hintText: "Enter username"),
+                          ),
                         ),
-                      ),
-                      RaisedButton(
-                        onPressed: () {
-                          setState(() {
-                            _isLoading = true;
-                          });
-                          loginUser(
-                              usernameController.text, passwordController.text);
-                        },
-                        child: Text('Login'),
-                        color: Colors.yellowAccent,
-                      ),
-                      RaisedButton(
-                        color: Colors.greenAccent,
-                        onPressed: () {
-                          setState(() {
-                            _isLoading = true;
-                          });
-                          register(
-                              usernameController.text, passwordController.text);
-                        },
-                        child: Text('Sign Up Instead'),
-                      )
-                    ],
+                        Container(
+                          child: TextField(
+                            cursorColor: Colors.white,
+                            controller: passwordController,
+                            decoration: InputDecoration(
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(30),
+                                ),
+                                hintText: "Enter password"),
+                          ),
+                        ),
+                        RaisedButton(
+                          onPressed: () {
+                            setState(() {
+                              _isLoading = true;
+                            });
+                            loginUser(usernameController.text,
+                                passwordController.text);
+                          },
+                          elevation: 10,
+                          child: Text('Login'),
+                          color: Colors.yellowAccent,
+                        ),
+                        RaisedButton(
+                          color: Colors.greenAccent,
+                          onPressed: () {
+                            setState(() {
+                              _isLoading = true;
+                            });
+                            register(usernameController.text,
+                                passwordController.text);
+                          },
+                          child: Text('Sign Up Instead'),
+                          elevation: 10,
+                        )
+                      ],
+                    ),
                   ),
                 ),
               ),

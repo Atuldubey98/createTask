@@ -1,5 +1,6 @@
 import 'package:createTask/provider/taskprovider.dart';
 import 'package:createTask/screens/allpost.dart';
+import 'package:createTask/screens/allusers.dart';
 import 'package:createTask/screens/taskAddScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -21,7 +22,7 @@ class _MyHomePageState extends State<MyHomePage> {
   var _isInit = true;
   var _isloading = false;
   var username;
-  
+
   @override
   void initState() {
     super.initState();
@@ -78,9 +79,8 @@ class _MyHomePageState extends State<MyHomePage> {
           MaterialButton(
             onPressed: () {
               setState(() {
-                Navigator.of(context).pushNamed(AllPost.routeName);
+                Navigator.of(context).pushReplacementNamed(AllPost.routeName);
               });
-           
             },
             elevation: 10,
             child: Text(
@@ -108,14 +108,46 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
       ),
       body: _isloading
-          ? Center(child: CircularProgressIndicator(backgroundColor: Colors.green,semanticsLabel: "Loading Posts",))
+          ? Center(
+              child: CircularProgressIndicator(
+                backgroundColor: Colors.green,
+                semanticsLabel: "Loading Posts",
+              ),
+            )
           : Consumer<TaskProvider>(
               child: Center(
-                child: Text("Add Item",
-                    style: TextStyle(
-                      fontSize: 30,
-                      color: Colors.white,
-                    )),
+                child: Column(
+                  children: <Widget>[
+                    SizedBox(
+                      height: 200,
+                    ),
+                    MaterialButton(
+                      onPressed: () async {
+                        final prefs = await SharedPreferences.getInstance();
+                        Navigator.of(context).pushNamed(TaskAdd.routeName,
+                            arguments: prefs.getString('username'));
+                      },
+                      elevation: 10,
+                      child: Text(
+                        "Post you first Item",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                    MaterialButton(
+                      onPressed: () {
+                        setState(() {
+                          Navigator.of(context)
+                              .pushReplacementNamed(AllPost.routeName);
+                        });
+                      },
+                      elevation: 10,
+                      child: Text(
+                        'Friends Posts',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ],
+                ),
               ),
               builder: (context, taskobject, ch) =>
                   Provider.of<TaskProvider>(context, listen: false)
@@ -129,10 +161,18 @@ class _MyHomePageState extends State<MyHomePage> {
                               taskobject.list[index].title,
                               taskobject.list[index].comments,
                               username,
-                              taskobject.list[index].image
-                              ),
+                              taskobject.list[index].image),
                           itemCount: taskobject.list.length),
             ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          setState(() {
+            Navigator.of(context).pushReplacementNamed(AllUsers.routeName);
+          });
+        },
+        backgroundColor: Color.fromRGBO(20, 20, 2, 0.6),
+        child: Text('Message'),
+      ),
     );
   }
 }

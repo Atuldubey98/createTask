@@ -17,6 +17,7 @@ class _ImageInputState extends State<ImageInput> {
     setState(() {
       _image = File(pickedImage.path);
     });
+    widget.onSelectedImage(_image);
   }
 
   Future getGalleryPicture() async {
@@ -24,7 +25,7 @@ class _ImageInputState extends State<ImageInput> {
     setState(() {
       _image = File(pickedImage.path);
     });
-    widget.onSelectedImage();
+    widget.onSelectedImage(_image);
   }
 
   @override
@@ -34,23 +35,30 @@ class _ImageInputState extends State<ImageInput> {
         Container(
           child: _image == null
               ? Center(
-                  child: Text('Add Post'),
+                  child: Text('Add Post', style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold
+                  ),),
                 )
               : Image.file(_image),
-          height: 600,
-          width: 300,
+          height: 500,
+          width: 200,
           margin: EdgeInsets.all(2),
-
+          
         ),
         Column(
           children: <Widget>[
-            RaisedButton(
+            IconButton(
+              padding: EdgeInsets.all(8),
+              
               onPressed: () => getCameraPicture(),
-              child: Text('Take Picture'),
+              icon: Icon(Icons.photo_camera)
             ),
-            RaisedButton(
+            IconButton(
+              padding: EdgeInsets.all(8),
+            
               onPressed: () => getGalleryPicture(),
-              child: Text('Select Picture'),
+              icon: Icon(Icons.photo),
             ),
           ],
         )
