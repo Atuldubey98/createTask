@@ -10,7 +10,7 @@ class UserProvider with ChangeNotifier {
   }
 
   Future<void> fetchandSetUsers() async {
-    final url = "http://192.168.0.100:5000/listusers";
+    final url = "http://192.168.0.107:5000/listusers";
     final response =
         await http.get(url, headers: {"Content-Type": "application/json"});
     final extractedUsers = json.decode(response.body) as Map<String, dynamic>;

@@ -14,80 +14,129 @@ class _AuthScreenState extends State<AuthScreen> {
   bool _isLoading = false;
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
-  Future<void> register(String username, String password) async {
-    final url = 'http://192.168.0.100:5000/register';
-    try {
-      final response = await http.post(
-        url,
-        body: json.encode({
-          'username': username,
-          'password': password,
-        }),
-        headers: {'Content-Type': "application/json"},
-      );
 
-      final jsonResponse = json.decode(response.body) as Map<String, dynamic>;
-      print(jsonResponse['status']);
-      if (jsonResponse['status'] == 'NotOk') {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) =>
-              DialogueBoxWidget('User already exist'),
+  Future<void> register(String username, String password) async {
+    if (usernameController.text == "" ||
+        passwordController.text == "" ||
+        usernameController.text.length < 3 ||
+        passwordController.text.length < 4) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) =>
+            DialogueBoxWidget('Enter Valid Username and Password'),
+      );
+    } else {
+      final url = 'http://192.168.0.107:5000/register';
+      try {
+        final response = await http.post(
+          url,
+          body: json.encode({
+            'username': username,
+            'password': password,
+          }),
+          headers: {'Content-Type': "application/json"},
         );
+
+        final jsonResponse = json.decode(response.body) as Map<String, dynamic>;
+        print(jsonResponse['status']);
+        if (jsonResponse['status'] == 'NotOk') {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) =>
+                DialogueBoxWidget('User already exist'),
+          );
+        }
+        if (jsonResponse['status'] == 'OK') {
+          final prefs = await SharedPreferences.getInstance();
+          setState(() {
+            prefs.setString('username', jsonResponse['username']);
+            Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (context) => MyHomePage('You Post')),
+                (route) => false);
+          });
+        }
+      } catch (e) {
+        throw e;
       }
-      if (jsonResponse['status'] == 'OK') {
-        final prefs = await SharedPreferences.getInstance();
-        setState(() {
-          prefs.setString('username', jsonResponse['username']);
-          Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(builder: (context) => MyHomePage('You Post')),
-              (route) => false);
-        });
-      }
-    } catch (e) {
-      throw e;
     }
   }
 
   Future<void> loginUser(String username, String password) async {
-    final url = 'http://192.168.0.100:5000/login/$username';
-    try {
-      final response = await http.post(
-        url,
-        body: json.encode(
-          {'username': username, 'password': password},
-        ),
-        headers: {'Content-Type': "application/json"},
+    if (usernameController.text == "" ||
+        passwordController.text == "" ||
+        usernameController.text.length < 3 ||
+        passwordController.text.length < 4) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) =>
+            DialogueBoxWidget('Enter Valid Username and Password'),
       );
+    } else if (usernameController.text.length > 8) {
+      String p = "[a-zA-Z0-9\+\.\_\%\-\+]{1,256}" +
+          "\\@" +
+          "[a-zA-Z0-9][a-zA-Z0-9\\-]{0,64}" +
+          "(" +
+          "\\." +
+          "[a-zA-Z0-9][a-zA-Z0-9\\-]{0,25}" +
+          ")+";
+      RegExp regExp = new RegExp(p);
 
-      final jsonresponse = json.decode(response.body);
-      print(jsonresponse['status']);
-      if (jsonresponse['status'] == "NotOk") {
-        showDialog(
-            context: context,
-            builder: (BuildContext context) =>
-                DialogueBoxWidget("Passsword does not match"));
-      }
-      if (jsonresponse['status'] == "match") {
+      if (!regExp.hasMatch(usernameController.text)) {
         showDialog(
           context: context,
           builder: (BuildContext context) =>
-              DialogueBoxWidget('User does not match'),
+              DialogueBoxWidget('Enter Valid Username and Password'),
         );
       }
-      if (jsonresponse['status'] == "OK") {
-        final prefs = await SharedPreferences.getInstance();
-        setState(() {
-          _isLoading = false;
-          prefs.setString('username', jsonresponse['username']);
-          Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(builder: (context) => MyHomePage('Your Post')),
-              (route) => false);
-        });
+    } else {
+      final url = 'http://192.168.0.107:5000/login/$username';
+      try {
+        final response = await http.post(
+          url,
+          body: json.encode(
+            {'username': username, 'password': password},
+          ),
+          headers: {'Content-Type': "application/json"},
+        );
+
+        final jsonresponse = json.decode(response.body);
+        print(jsonresponse['status']);
+        if (jsonresponse['status'] == "NotOk") {
+          showDialog(
+              context: context,
+              builder: (BuildContext context) =>
+                  DialogueBoxWidget("Passsword does not match"));
+        }
+        if (jsonresponse['status'] == "match") {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) =>
+                DialogueBoxWidget('User does not match'),
+          );
+        }
+        if (jsonresponse['status'] == "OK") {
+          final prefs = await SharedPreferences.getInstance();
+          setState(() {
+            _isLoading = false;
+            prefs.setString('username', jsonresponse['username']);
+            Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(
+                    builder: (context) => MyHomePage('Your Post')),
+                (route) => false);
+          });
+        }
+      } catch (e) {
+        throw e;
       }
-    } catch (e) {
-      throw e;
     }
+  }
+
+  @override
+  void dispose() {
+    usernameController.dispose();
+    passwordController.dispose();
+
+    super.dispose();
   }
 
   @override
@@ -158,6 +207,7 @@ class _AuthScreenState extends State<AuthScreen> {
                             setState(() {
                               _isLoading = true;
                             });
+
                             loginUser(usernameController.text,
                                 passwordController.text);
                           },
