@@ -1,10 +1,8 @@
-
 import 'package:createTask/screens/allpost.dart';
 
 import 'package:createTask/screens/homepageScreen.dart';
 
 import 'package:createTask/screens/taskAddScreen.dart';
-
 
 import 'package:flutter/material.dart';
 
@@ -13,7 +11,6 @@ import './provider/taskprovider.dart';
 import './provider/userprovider.dart';
 
 void main() {
-  
   runApp(MyApp());
 }
 
@@ -28,7 +25,10 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider.value(
           value: UserProvider(),
-        )
+        ),
+        ChangeNotifierProvider.value(
+          value: UserProvider(),
+        ),
       ],
       child: MaterialApp(
         title: 'TODO',
@@ -41,7 +41,6 @@ class MyApp extends StatelessWidget {
         routes: {
           TaskAdd.routeName: (context) => TaskAdd(),
           AllPost.routeName: (context) => AllPost(),
-       
         },
       ),
     );

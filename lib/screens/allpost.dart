@@ -28,8 +28,9 @@ class _AllPostState extends State<AllPost> {
       setState(() {
         _isLoading = false;
       });
+      _isInit = false;
     });
-    _isInit = false;
+    
     super.didChangeDependencies();
   }
 

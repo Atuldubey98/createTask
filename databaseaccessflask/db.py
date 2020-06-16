@@ -15,8 +15,8 @@ db = client.todo
 todoApp = db.todo
 usersList = db.users
 images = GridFS(db)
-
-
+messages= db.message
+connections = db.connection
 @app.route('/login/<string:userID>', methods=['POST'])
 def loginuser(userID):
     request_data = request.get_json()
@@ -157,8 +157,54 @@ def listusers():
         return jsonify({'data' : { } , "status" :  "Not Ok", "error" : "No users"})
     return jsonify({'data' : users , "status" :  "OK", "error" : "Users Found"})
 
+@app.route('/requestchat', methods = ['POST'])
+def requestchat():
+    request_data = request.get_json()
+    from_user = request_data['from_user']
+    to_user = request_data['to_user']
+    to_user_channel = "private-notification_user%s"%(to_user)
+    from_user_channel = 'private-notification_user%s'%(from_user)
+    chat_channel = { 'channel_from_user' : from_user , 'channel_to_user' : to_user}
+    data = {
+            "from_user": from_user,
+            "to_user": to_user,
+            "from_user_notification_channel": from_user_channel,
+            "to_user_notification_channel": to_user_channel,
+            "channel_name": chat_channel,
+        }
+    connections.insert_one(data)
+    return jsonify(data)
 
+@app.route('/sendmessage', methods = ['POST'])
+def sendmessage():
+    request_data = request.get_json()
+    from_user = request_data['from_user']
+    to_user = request_data['to_user']
+    message = request_data['message']
+    idofchatitem = request_data['_id']
+    
+    new_message = {
+            "_id":idofchatitem,
+            "from_user": from_user,
+            "to_user": to_user,
+            "message": message,
+            
+        }
+    messages.insert_one(new_message)
+    return jsonify(new_message)
 
+@app.route('/allchat/<string:fromuser>/<string:touser>',methods = ['GET'])
+def allchat(fromuser,touser):
+   if(messages.find_one({'from_user' : fromuser , 'to_user' : touser}) == None):
+        response = {'status' : "NotOk" , "data" : {}}
+        return(jsonify(response))
+   else:
+        messagesList = []
+        for item in messages.find({'from_user' : fromuser , 'to_user' : touser}):
+            itemtoadd = {"message" : item['message']}
+            messagesList.append(itemtoadd)
+        response = {"status" : "OK" , "data" : messagesList}
+        return(jsonify(response))    
 if __name__ == '__main__':
 
     app.run(host='0.0.0.0', debug=True)

@@ -1,5 +1,6 @@
 import 'package:createTask/provider/taskprovider.dart';
 import 'package:createTask/screens/allpost.dart';
+import 'package:createTask/screens/allusers.dart';
 
 import 'package:createTask/screens/taskAddScreen.dart';
 import 'package:flutter/material.dart';
@@ -34,10 +35,9 @@ class _MyHomePageState extends State<MyHomePage> {
     if (prefs.getString('username') == null) {
       setState(() {
         Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (context) => AuthScreen()),
-          (route) => false);
+            MaterialPageRoute(builder: (context) => AuthScreen()),
+            (route) => false);
       });
-    
     }
   }
 
@@ -169,7 +169,11 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-       
+          setState(() {
+            Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (ctx) => AllUsers()),
+                (route) => false);
+          });
         },
         backgroundColor: Color.fromRGBO(20, 20, 2, 0.6),
         child: Text('Message'),
