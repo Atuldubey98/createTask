@@ -82,7 +82,7 @@ class _MyHomePageState extends State<MyHomePage> {
           MaterialButton(
             onPressed: () {
               setState(() {
-                Navigator.of(context).pushReplacementNamed(AllPost.routeName);
+                Navigator.of(context).pushNamed(AllPost.routeName);
               });
             },
             elevation: 10,
@@ -140,7 +140,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       onPressed: () {
                         setState(() {
                           Navigator.of(context)
-                              .pushReplacementNamed(AllPost.routeName);
+                              .pushNamed(AllPost.routeName);
                         });
                       },
                       elevation: 10,
@@ -170,9 +170,9 @@ class _MyHomePageState extends State<MyHomePage> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           setState(() {
-            Navigator.of(context).pushAndRemoveUntil(
+            Navigator.of(context).push(
                 MaterialPageRoute(builder: (ctx) => AllUsers()),
-                (route) => false);
+               );
           });
         },
         backgroundColor: Color.fromRGBO(20, 20, 2, 0.6),

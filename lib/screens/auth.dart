@@ -26,7 +26,7 @@ class _AuthScreenState extends State<AuthScreen> {
             DialogueBoxWidget('Enter Valid Username and Password'),
       );
     } else {
-      final url = 'http://192.168.0.107:5000/register';
+      final url = 'http://192.168.0.100:5000/register';
       try {
         final response = await http.post(
           url,
@@ -89,7 +89,7 @@ class _AuthScreenState extends State<AuthScreen> {
         );
       }
     } else {
-      final url = 'http://192.168.0.107:5000/login/$username';
+      final url = 'http://192.168.0.100:5000/login/$username';
       try {
         final response = await http.post(
           url,

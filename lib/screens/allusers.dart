@@ -1,8 +1,10 @@
-import 'package:createTask/provider/userprovider.dart';
+import 'package:createTask/provider/alluserprovider.dart';
+import 'package:createTask/screens/chatScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'allpost.dart';
 import '../screens/homepageScreen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AllUsers extends StatefulWidget {
   @override
@@ -13,13 +15,17 @@ class _AllUsersState extends State<AllUsers> {
   var _isInit = true;
   var _isLoading = false;
   @override
-  void didChangeDependencies() {
+  void didChangeDependencies() async {
     if (_isInit) {
       setState(() {
         _isLoading = true;
       });
     }
-    Provider.of<UserProvider>(context,listen: false).fetchandSetUsers().then((_) {
+    final prefs = await SharedPreferences.getInstance();
+    final username = prefs.getString('username');
+    Provider.of<UserProvider>(context, listen: false)
+        .fetchAndSetusers(username)
+        .then((_) {
       setState(() {
         _isLoading = false;
       });
@@ -46,11 +52,9 @@ class _AllUsersState extends State<AllUsers> {
           ),
           MaterialButton(
             onPressed: () {
-              Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(
-                    builder: (context) => MyHomePage('Your Post'),
-                  ));
-                  
+              Navigator.of(context).pushReplacement(MaterialPageRoute(
+                builder: (context) => MyHomePage('Your Post'),
+              ));
             },
             child: Text(
               'Your Post',
@@ -63,12 +67,20 @@ class _AllUsersState extends State<AllUsers> {
           ? CircularProgressIndicator()
           : Consumer<UserProvider>(
               child: Center(child: Text('No Friends You are So Lonely')),
-              builder: (context, item, child) => item.listusers.length <= 0
+              builder: (context, item, child) => item.listUsers.length <= 0
                   ? child
                   : ListView.builder(
-                      itemCount: item.listusers.length,
+                      itemCount: item.listUsers.length,
                       itemBuilder: (_, index) => ListTile(
-                          leading: Text(item.listusers[index].username))),
+                          onTap: () {
+                            Navigator.of(_).pushReplacement(
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    ChatScreen(item.listUsers[index].username),
+                              ),
+                            );
+                          },
+                          leading: Text(item.listUsers[index].username))),
             ),
     );
   }

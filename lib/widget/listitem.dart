@@ -46,13 +46,10 @@ class _ListItemState extends State<ListItem> {
                         style: TextStyle(color: Colors.black),
                       ),
                 leading: CircleAvatar(
+                  backgroundImage: FileImage(widget.image),
+                  
                   backgroundColor: Colors.yellowAccent,
-                  child: widget.image == null
-                      ? Text('No Image')
-                      : Image.file(
-                          widget.image,
-                          fit: BoxFit.cover,
-                        ),
+                  
                 ),
                 contentPadding: EdgeInsets.all(10),
                 title: Text(

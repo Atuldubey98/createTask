@@ -1,3 +1,4 @@
+import 'package:createTask/provider/messagePro.dart';
 import 'package:createTask/screens/allpost.dart';
 
 import 'package:createTask/screens/homepageScreen.dart';
@@ -8,7 +9,7 @@ import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
 import './provider/taskprovider.dart';
-import './provider/userprovider.dart';
+import './provider/alluserprovider.dart';
 
 void main() {
   runApp(MyApp());
@@ -29,6 +30,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider.value(
           value: UserProvider(),
         ),
+        ChangeNotifierProvider.value(
+          value: MessagePro(),
+        )
       ],
       child: MaterialApp(
         title: 'TODO',

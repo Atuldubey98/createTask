@@ -3,6 +3,7 @@ import 'package:createTask/widget/imageinput.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'dart:io';
+
 class TaskAdd extends StatelessWidget {
   static const routeName = '/addItem';
   @override
@@ -11,9 +12,9 @@ class TaskAdd extends StatelessWidget {
     final commentController = TextEditingController();
     final item = ModalRoute.of(context).settings.arguments;
     File _pickedImage;
-   void _selectImage(File pickedImage) {
-    _pickedImage = pickedImage;
-   }
+    void _selectImage(File pickedImage) {
+      _pickedImage = pickedImage;
+    }
 
     return Scaffold(
       backgroundColor: Color.fromARGB(120, 20, 200, 6),
@@ -30,8 +31,9 @@ class TaskAdd extends StatelessWidget {
               children: <Widget>[
                 TextField(
                   decoration: InputDecoration(
-                      
-                      labelText: "Title", contentPadding: EdgeInsets.all(12)),
+                    labelText: "Title",
+                    contentPadding: EdgeInsets.all(12),
+                  ),
                   controller: titleController,
                 ),
                 TextField(
