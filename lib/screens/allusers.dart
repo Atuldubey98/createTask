@@ -1,5 +1,6 @@
 import 'package:createTask/provider/alluserprovider.dart';
-import 'package:createTask/screens/chatScreen.dart';
+import 'package:createTask/widget/chatbuilder.dart';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'allpost.dart';
@@ -38,6 +39,7 @@ class _AllUsersState extends State<AllUsers> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.lightGreen,
         title: Text('Your Friends'),
         actions: <Widget>[
           MaterialButton(
@@ -64,21 +66,22 @@ class _AllUsersState extends State<AllUsers> {
         ],
       ),
       body: _isLoading
-          ? CircularProgressIndicator()
+          ? Center(child: CircularProgressIndicator())
           : Consumer<UserProvider>(
-              child: Center(child: Text('No Friends You are So Lonely')),
+              child: Center(
+                  child: Text(
+                'No Friends!',
+                style: TextStyle(fontSize: 30),
+              )),
               builder: (context, item, child) => item.listUsers.length <= 0
                   ? child
                   : ListView.builder(
                       itemCount: item.listUsers.length,
                       itemBuilder: (_, index) => ListTile(
                           onTap: () {
-                            Navigator.of(_).pushReplacement(
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    ChatScreen(item.listUsers[index].username),
-                              ),
-                            );
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => ChatBuilder(
+                                    item.listUsers[index].username)));
                           },
                           leading: Text(item.listUsers[index].username))),
             ),

@@ -74,6 +74,12 @@
       "languageVersion": "2.1"
     },
     {
+      "name": "flutter_socket_io",
+      "rootUri": "file:///E:/App/flutter/.pub-cache/hosted/pub.dartlang.org/flutter_socket_io-0.6.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.0"
+    },
+    {
       "name": "flutter_test",
       "rootUri": "file:///E:/App/flutter/packages/flutter_test",
       "packageUri": "lib/",
@@ -308,7 +314,7 @@
       "languageVersion": "2.7"
     }
   ],
-  "generated": "2020-06-15T08:04:22.196497Z",
+  "generated": "2020-06-22T12:48:42.545532Z",
   "generator": "pub",
   "generatorVersion": "2.8.4"
 }

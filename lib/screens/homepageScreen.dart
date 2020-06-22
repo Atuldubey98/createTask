@@ -82,7 +82,7 @@ class _MyHomePageState extends State<MyHomePage> {
           MaterialButton(
             onPressed: () {
               setState(() {
-                Navigator.of(context).pushNamed(AllPost.routeName);
+                Navigator.of(context).pushReplacementNamed(AllPost.routeName);
               });
             },
             elevation: 10,
@@ -118,38 +118,40 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             )
           : Consumer<TaskProvider>(
-              child: Center(
-                child: Column(
-                  children: <Widget>[
-                    SizedBox(
-                      height: 200,
-                    ),
-                    MaterialButton(
-                      onPressed: () async {
-                        final prefs = await SharedPreferences.getInstance();
-                        Navigator.of(context).pushNamed(TaskAdd.routeName,
-                            arguments: prefs.getString('username'));
-                      },
-                      elevation: 10,
-                      child: Text(
-                        "Post you first Item",
-                        style: TextStyle(color: Colors.white),
+              child: SingleChildScrollView(
+                              child: Center(
+                  child: Column(
+                    children: <Widget>[
+                      SizedBox(
+                        height: 200,
                       ),
-                    ),
-                    MaterialButton(
-                      onPressed: () {
-                        setState(() {
-                          Navigator.of(context)
-                              .pushNamed(AllPost.routeName);
-                        });
-                      },
-                      elevation: 10,
-                      child: Text(
-                        'Friends Posts',
-                        style: TextStyle(color: Colors.white),
+                      MaterialButton(
+                        onPressed: () async {
+                          final prefs = await SharedPreferences.getInstance();
+                          Navigator.of(context).pushNamed(TaskAdd.routeName,
+                              arguments: prefs.getString('username'));
+                        },
+                        elevation: 10,
+                        child: Text(
+                          "Post you first Item",
+                          style: TextStyle(color: Colors.white),
+                        ),
                       ),
-                    ),
-                  ],
+                      MaterialButton(
+                        onPressed: () {
+                          setState(() {
+                            Navigator.of(context)
+                                .pushNamed(AllPost.routeName);
+                          });
+                        },
+                        elevation: 10,
+                        child: Text(
+                          'Friends Posts',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
               builder: (context, taskobject, ch) =>
@@ -176,7 +178,7 @@ class _MyHomePageState extends State<MyHomePage> {
           });
         },
         backgroundColor: Color.fromRGBO(20, 20, 2, 0.6),
-        child: Text('Message'),
+        child: Text('Chat'),
       ),
     );
   }

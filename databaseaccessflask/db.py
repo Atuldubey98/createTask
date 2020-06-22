@@ -6,9 +6,9 @@ import bcrypt
 import os
 from gridfs import GridFS
 import json
-
+from  flask_socketio import SocketIO,send
 app = Flask(__name__)
-
+app.config['SECRET_KEY'] = "kjajkasd"
 client = MongoClient(
     "mongodb+srv://atuldubey:08091959@cluster0-isxbl.mongodb.net/<dbname>?retryWrites=true&w=majority")
 db = client.todo
@@ -17,6 +17,15 @@ usersList = db.users
 images = GridFS(db)
 messages = db.message
 connections = db.connection
+socketio = SocketIO(app)
+
+
+
+
+@socketio.on("message")
+def handle_msg(msg):
+    print("Message Sent")
+    send(msg, broadcast=True) 
 
 
 @app.route('/login/<string:userID>', methods=['POST'])
@@ -190,13 +199,13 @@ def sendmessage():
     to_user = request_data['to_user']
     message = request_data['message']
     idofchatitem = request_data['_id']
-
+    tag = request_data['tag']
     new_message = {
         "_id": idofchatitem,
         "from_user": from_user,
         "to_user": to_user,
         "message": message,
-
+        "tag" : tag
     }
     messages.insert_one(new_message)
     return jsonify(new_message)
@@ -204,22 +213,23 @@ def sendmessage():
 
 @app.route('/allchat/<string:fromuser>/<string:touser>', methods=['GET'])
 def allchat(fromuser, touser):
-    response = {"data" : {} , "error" : "No Chat"}
+    response = {"data": {}, "error": "No Chat"}
     messagesList = []
-      
+
     for item in messages.find({'from_user': fromuser, 'to_user': touser}):
-            itemtoadd = {"message": item['message']}
-            messagesList.append(itemtoadd)
+        itemtoadd = {
+            "message": item['message'], 'tag' : item['tag'],'_id': item['_id']}
+        messagesList.append(itemtoadd)
     response = {"status": "OK", "data": messagesList}
-    
-    if (messagesList == []):
-        for item in messages.find({'from_user': touser, 'to_user': fromuser}):
-            itemtoadd = {"message": item['message']}
-            messagesList.append(itemtoadd)
-        response = {"data" : messagesList , "error" : "No Chat"}          
+
+   
+    for item in messages.find({'from_user': touser, 'to_user': fromuser}):
+        itemtoadd = {
+                "message": item['message'], 'tag': item['tag'],'_id': item['_id']}
+        messagesList.append(itemtoadd)
+        response = {"data": messagesList, "error": "No Chat"}
     return jsonify(response)
-    
+
 
 if __name__ == '__main__':
-
-    app.run(host='0.0.0.0', debug=True)
+    socketio.run(app,host='0.0.0.0', debug=True)

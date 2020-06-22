@@ -23,10 +23,10 @@ class TaskProvider with ChangeNotifier {
         image: imageFile);
     _list.add(newObject);
     notifyListeners();
-    final url = 'http://192.168.0.100:5000/addItem/$item';
+    final url = 'http://192.168.0.111:5000/addItem/$item';
     final String name = p.basename(imageFile.path);
     final urlImage =
-        'http://192.168.0.100:5000/upload/${p.basename(imageFile.path)}/${newObject.id}';
+        'http://192.168.0.111:5000/upload/${p.basename(imageFile.path)}/${newObject.id}';
     try {
       final response = await http.post(url,
           body: json.encode({
@@ -47,7 +47,7 @@ class TaskProvider with ChangeNotifier {
   }
 
   Future<File> fetchImage(String user, String filename, String itemId) async {
-    final url = 'http://192.168.0.100:5000/download/$user/$filename/$itemId';
+    final url = 'http://192.168.0.111:5000/download/$user/$filename/$itemId';
     http.Client client = new http.Client();
     var req = await client.get(Uri.parse(url));
     var bytes = req.bodyBytes;
@@ -62,7 +62,7 @@ class TaskProvider with ChangeNotifier {
       _list = [];
       notifyListeners();
     }
-    final url = 'http://192.168.0.100:5000/$username';
+    final url = 'http://192.168.0.111:5000/$username';
     final extractedItem =
         await http.get(url, headers: {"Accept": "application/json"});
     final response = json.decode(extractedItem.body) as Map<String, dynamic>;
@@ -90,20 +90,26 @@ class TaskProvider with ChangeNotifier {
   }
 
   Future<void> fetchandsetALL() async {
-    final url = 'http://192.168.0.100:5000/allpost';
+    final url = 'http://192.168.0.111:5000/allpost';
     final extractedItem =
         await http.get(url, headers: {"Accept": "application/json"});
     final response = json.decode(extractedItem.body) as Map<String, dynamic>;
     print(response['data']);
     List<Task> loadedItem = [];
     for (int i = 0; i < response['data'].length; i++) {
-      loadedItem.add(Task(
+      loadedItem.add(
+        Task(
           id: response['data'][i]['_id'],
           title: response['data'][i]['title'],
           comments: response['data'][i]['comment'],
           userID: response['data'][i]['username'],
-          image: await fetchImage(response['data'][i]['username'],
-              response['data'][i]['imageName'], response['data'][i]['_id'])));
+          image: await fetchImage(
+            response['data'][i]['username'],
+            response['data'][i]['imageName'],
+            response['data'][i]['_id'],
+          ),
+        ),
+      );
     }
     _list = loadedItem;
     notifyListeners();

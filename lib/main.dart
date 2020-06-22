@@ -1,4 +1,4 @@
-import 'package:createTask/provider/messagePro.dart';
+
 import 'package:createTask/screens/allpost.dart';
 
 import 'package:createTask/screens/homepageScreen.dart';
@@ -27,12 +27,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider.value(
           value: UserProvider(),
         ),
-        ChangeNotifierProvider.value(
-          value: UserProvider(),
-        ),
-        ChangeNotifierProvider.value(
-          value: MessagePro(),
-        )
+        
+      
       ],
       child: MaterialApp(
         title: 'TODO',
@@ -41,7 +37,7 @@ class MyApp extends StatelessWidget {
           primarySwatch: Colors.blue,
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
-        home: MyHomePage('You Post'),
+        home: MyHomePage('Your Post'),
         routes: {
           TaskAdd.routeName: (context) => TaskAdd(),
           AllPost.routeName: (context) => AllPost(),

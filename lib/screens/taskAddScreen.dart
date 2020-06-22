@@ -15,7 +15,6 @@ class TaskAdd extends StatelessWidget {
     void _selectImage(File pickedImage) {
       _pickedImage = pickedImage;
     }
-
     return Scaffold(
       backgroundColor: Color.fromARGB(120, 20, 200, 6),
       appBar: AppBar(

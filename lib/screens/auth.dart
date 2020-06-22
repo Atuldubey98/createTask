@@ -26,7 +26,7 @@ class _AuthScreenState extends State<AuthScreen> {
             DialogueBoxWidget('Enter Valid Username and Password'),
       );
     } else {
-      final url = 'http://192.168.0.100:5000/register';
+      final url = 'http://192.168.0.111:5000/register';
       try {
         final response = await http.post(
           url,
@@ -89,7 +89,7 @@ class _AuthScreenState extends State<AuthScreen> {
         );
       }
     } else {
-      final url = 'http://192.168.0.100:5000/login/$username';
+      final url = 'http://192.168.0.103:5000/login/$username';
       try {
         final response = await http.post(
           url,
@@ -101,6 +101,13 @@ class _AuthScreenState extends State<AuthScreen> {
 
         final jsonresponse = json.decode(response.body);
         print(jsonresponse['status']);
+        if(response.statusCode > 200)
+        {
+          showDialog(
+              context: context,
+              builder: (BuildContext context) =>
+                  DialogueBoxWidget("Server is Down"));
+        }
         if (jsonresponse['status'] == "NotOk") {
           showDialog(
               context: context,
@@ -174,17 +181,15 @@ class _AuthScreenState extends State<AuthScreen> {
                         SizedBox(
                           height: MediaQuery.of(context).size.height * 0.65,
                           child: Image.network(
-                              'https://logos-download.com/wp-content/uploads/2016/06/Bitcoin_logo_yellow.png'),
+                              'https://image.flaticon.com/share_sprites/pack/0/111/111682-social-websites.jpg'),
                         ),
                         Container(
                           child: TextField(
                             cursorColor: Colors.white,
                             controller: usernameController,
                             decoration: InputDecoration(
-                                prefixIcon: Icon(
-                                  Icons.supervised_user_circle,
-                                  color: Colors.blue,
-                                ),
+                              fillColor: Colors.white,
+
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(30),
                                 ),
